@@ -1,4 +1,4 @@
-"""Portable executable processing
+"""Portable executable processor
 """
 from ds_core.api import Artifact
 from ds_core.plugin import Plugin
