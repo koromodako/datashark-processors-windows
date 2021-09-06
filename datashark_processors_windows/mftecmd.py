@@ -21,7 +21,7 @@ class MFTECmdProcessor(ProcessorInterface, metaclass=ProcessorMeta):
     Template of a processor, not meant for use, meant for dev
     """
 
-    def _run(
+    async def _run(
         self, filepath: Path, arguments: List[ProcessorArgument]
     ) -> Tuple[bool, Optional[str]]:
         """Process a file using tskape"""
