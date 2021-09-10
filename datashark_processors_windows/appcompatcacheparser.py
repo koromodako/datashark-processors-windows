@@ -32,4 +32,4 @@ class AppCompatCacheParserProcessor(
         # TODO: perform processor work here
         raise ProcessorError("not implemented!")
         # commit data added by plugin (if needed)
-        #self.session.commit()
+        # self.session.commit()
