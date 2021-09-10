@@ -11,7 +11,9 @@ NAME = 'windows_appcompatcacheparser'
 LOGGER = LOGGING_MANAGER.get_logger(NAME)
 
 
-class AppCompatCacheParserProcessor(ProcessorInterface, metaclass=ProcessorMeta):
+class AppCompatCacheParserProcessor(
+    ProcessorInterface, metaclass=ProcessorMeta
+):
     """Template of a processor"""
 
     NAME = NAME
@@ -31,7 +33,7 @@ class AppCompatCacheParserProcessor(ProcessorInterface, metaclass=ProcessorMeta)
             # TODO: perform artifact processing here
             raise NotImplementedError()
             # commit data added by plugin (if needed)
-            #self.session.commit()
+            # self.session.commit()
             # finally set overall processing status to SUCCESS
             status = True
         except:

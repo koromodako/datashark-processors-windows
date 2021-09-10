@@ -31,7 +31,7 @@ class SumECmdProcessor(ProcessorInterface, metaclass=ProcessorMeta):
             # TODO: perform artifact processing here
             raise NotImplementedError()
             # commit data added by plugin (if needed)
-            #self.session.commit()
+            # self.session.commit()
             # finally set overall processing status to SUCCESS
             status = True
         except:
