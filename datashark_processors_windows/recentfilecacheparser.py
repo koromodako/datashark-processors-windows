@@ -1,11 +1,11 @@
 """Datashark Template Plugin
 """
-from typing import List, Tuple, Optional
+from typing import Dict
 from pathlib import Path
 from datashark_core.meta import ProcessorMeta
 from datashark_core.logging import LOGGING_MANAGER
-from datashark_core.processor import ProcessorInterface
-from datashark_core.model.api import System, ProcessorArgument
+from datashark_core.processor import ProcessorInterface, ProcessorError
+from datashark_core.model.api import Kind, System, ProcessorArgument
 
 NAME = 'windows_recentfilecacheparser'
 LOGGER = LOGGING_MANAGER.get_logger(NAME)
@@ -23,21 +23,13 @@ class RecentFileCacheParserProcessor(
     Template of a processor, not meant for use, meant for dev
     """
 
-    async def _run(
-        self, filepath: Path, arguments: List[ProcessorArgument]
-    ) -> Tuple[bool, Optional[str]]:
+    async def _run(self, arguments: Dict[str, ProcessorArgument]):
         """Process a file using tskape"""
-        status = False
-        details = None
-        try:
-            # TODO: perform artifact processing here
-            raise NotImplementedError()
-            # commit data added by plugin (if needed)
-            # self.session.commit()
-            # finally set overall processing status to SUCCESS
-            status = True
-        except:
-            LOGGER.exception(
-                "an exception occured while processing filepath: %s", filepath
-            )
-        return status, details
+        # retrieve workdir and check access to it
+        workdir = self.config.get('datashark.agent.workdir', type=Path)
+        if not workdir.is_dir():
+            raise ProcessorError("agent-side workdir not found!")
+        # TODO: perform processor work here
+        raise ProcessorError("not implemented!")
+        # commit data added by plugin (if needed)
+        #self.session.commit()
