@@ -28,7 +28,7 @@ class AmCacheParserProcessor(ProcessorInterface, metaclass=ProcessorMeta):
         },
         {
             'name': 'mp',
-            'kind': Kind.BOOl,
+            'kind': Kind.BOOL,
             'value': 'false',
             'required': False,
             'description': """
