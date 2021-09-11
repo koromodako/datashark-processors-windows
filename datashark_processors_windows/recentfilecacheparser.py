@@ -1,7 +1,7 @@
 """Datashark Template Plugin
 """
 from typing import Dict
-from pathlib import Path
+from asyncio.subprocess import PIPE, DEVNULL
 from datashark_core.meta import ProcessorMeta
 from datashark_core.logging import LOGGING_MANAGER
 from datashark_core.processor import ProcessorInterface, ProcessorError
@@ -14,22 +14,64 @@ LOGGER = LOGGING_MANAGER.get_logger(NAME)
 class RecentFileCacheParserProcessor(
     ProcessorInterface, metaclass=ProcessorMeta
 ):
-    """Template of a processor"""
+    """RecentFileCacheParser processor"""
 
     NAME = NAME
     SYSTEM = System.WINDOWS
-    ARGUMENTS = []
+    ARGUMENTS = [
+        {
+            'name': 'csvf',
+            'kind': Kind.STR,
+            'required': False,
+            'description': """
+                File name to save CSV formatted results to
+            """,
+        },
+        {
+            'name': 'csv',
+            'kind': Kind.PATH,
+            'required': False,
+            'description': """
+                Directory to save CSV formatted results to. Either this or 'json' is required
+            """,
+        },
+        {
+            'name': 'json',
+            'kind': Kind.PATH,
+            'required': False,
+            'description': """
+                Directory to save json representation to
+            """,
+        },
+        {
+            'name': 'f',
+            'kind': Kind.PATH,
+            'required': True,
+            'description': """File to process""",
+        },
+    ]
     DESCRIPTION = """
-    Template of a processor, not meant for use, meant for dev
+    Processor for Eric Zimmermann's RecentFileCacheParser
     """
 
     async def _run(self, arguments: Dict[str, ProcessorArgument]):
-        """Process a file using tskape"""
-        # retrieve workdir and check access to it
-        workdir = self.config.get('datashark.agent.workdir', type=Path)
-        if not workdir.is_dir():
-            raise ProcessorError("agent-side workdir not found!")
-        # TODO: perform processor work here
-        raise ProcessorError("not implemented!")
-        # commit data added by plugin (if needed)
-        # self.session.commit()
+        """Process resources using recentfilecacheparser"""
+        # invoke subprocess
+        proc = await self._start_subprocess(
+            'datashark.processors.recentfilecacheparser.bin',
+            ['-q'],
+            [
+                # optional
+                ('csvf', '--csvf'),
+                ('csv', '--csv'),
+                ('json', '--json'),
+                ('f', '-f'),
+                # positional
+            ],
+            arguments,
+            stdout=DEVNULL,
+            stderr=PIPE,
+        )
+        _, stderr = await proc.communicate()
+        if proc.returncode != 0:
+            raise ProcessorError(stderr)

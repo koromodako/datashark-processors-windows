@@ -1,7 +1,7 @@
 """Datashark Template Plugin
 """
 from typing import Dict
-from pathlib import Path
+from asyncio.subprocess import PIPE, DEVNULL
 from datashark_core.meta import ProcessorMeta
 from datashark_core.logging import LOGGING_MANAGER
 from datashark_core.processor import ProcessorInterface, ProcessorError
@@ -12,22 +12,68 @@ LOGGER = LOGGING_MANAGER.get_logger(NAME)
 
 
 class SumECmdProcessor(ProcessorInterface, metaclass=ProcessorMeta):
-    """Template of a processor"""
+    """SumECmd processor"""
 
     NAME = NAME
     SYSTEM = System.WINDOWS
-    ARGUMENTS = []
+    ARGUMENTS = [
+        {
+            'name': 'wd',
+            'kind': Kind.BOOL,
+            'value': 'false',
+            'required': False,
+            'description': """
+                Do not generate day level details in CSV
+            """,
+        },
+        {
+            'name': 'dt',
+            'kind': Kind.STR,
+            'value': 'yyyy-MM-dd HH:mm:ss.fffffff',
+            'required': False,
+            'description': """
+                The custom date/time format to use when displaying time stamps
+            """,
+        },
+        {
+            'name': 'd',
+            'kind': Kind.PATH,
+            'required': True,
+            'description': """
+                Directory to recursively process, looking for SystemIdentity.mdb, Current.mdb, etc
+            """,
+        },
+        {
+            'name': 'csv',
+            'kind': Kind.PATH,
+            'required': True,
+            'description': """
+                Directory to save CSV formatted results to
+            """,
+        },
+    ]
     DESCRIPTION = """
-    Template of a processor, not meant for use, meant for dev
+    Processor for Eric Zimmermann's SumECmd
     """
 
     async def _run(self, arguments: Dict[str, ProcessorArgument]):
-        """Process a file using tskape"""
-        # retrieve workdir and check access to it
-        workdir = self.config.get('datashark.agent.workdir', type=Path)
-        if not workdir.is_dir():
-            raise ProcessorError("agent-side workdir not found!")
-        # TODO: perform processor work here
-        raise ProcessorError("not implemented!")
-        # commit data added by plugin (if needed)
-        # self.session.commit()
+        """Process resources using sumecmd"""
+        # invoke subprocess
+        proc = await self._start_subprocess(
+            'datashark.processors.sumecmd.bin',
+            [],
+            [
+                # optional
+                ('wd', '--wd'),
+                ('dt', '--dt'),
+                ('d', '-d'),
+                ('csv', '--csv'),
+                # positional
+            ],
+            arguments,
+            stdout=DEVNULL,
+            stderr=PIPE,
+        )
+        _, stderr = await proc.communicate()
+        if proc.returncode != 0:
+            raise ProcessorError(stderr)

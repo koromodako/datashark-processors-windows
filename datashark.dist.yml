@@ -1,0 +1,20 @@
+datashark:
+  processors: #----------------------------------------------------[PROCESSORS]
+    amcacheparser:
+      bin: Z:\datashark\tools\AmCacheParser.exe
+    appcompatcacheparser:
+      bin: Z:\datashark\tools\AppCompatCacheParser.exe
+    jlecmd:
+      bin: Z:\datashark\tools\JLECmd.exe
+    mftecmd:
+      bin: Z:\datashark\tools\MFTECmd.exe
+    pecmd:
+      bin: Z:\datashark\tools\PECmd.exe
+    recentfilecacheparser:
+      bin: Z:\datashark\tools\RecentFileCacheParser.exe
+    srumecmd:
+      bin: Z:\datashark\tools\SrumECmd.exe
+    sumecmd:
+      bin: Z:\datashark\tools\SumECmd.exe
+    wxtcmd:
+      bin: Z:\datashark\tools\WxTCmd.exe
