@@ -74,6 +74,4 @@ class SumECmdProcessor(ProcessorInterface, metaclass=ProcessorMeta):
             stdout=DEVNULL,
             stderr=PIPE,
         )
-        _, stderr = await proc.communicate()
-        if proc.returncode != 0:
-            raise ProcessorError(stderr)
+        await self._handle_communicating_process(proc)
